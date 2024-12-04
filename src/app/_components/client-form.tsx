@@ -6,6 +6,15 @@ import { SkeletonMail } from "./skeleton-mail";
 import { useState } from "react";
 import { Loader } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const ClientForm = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -13,9 +22,29 @@ export const ClientForm = () => {
 
   return (
     <>
-      <Label htmlFor="url">YouTube Channel URL</Label>
-      <Input id="url" placeholder="The URL of the YouTube channel" />
-      <Label htmlFor="url">YouTube Channel URL</Label>
+      <div className="space-y-3 w-full">
+        <Label htmlFor="url">YouTube Channel URL</Label>
+        <Input id="url" placeholder="The URL of the YouTube channel" />
+      </div>
+
+      <div className="space-y-3 w-full">
+        <Label htmlFor="url">YouTube Channel URL</Label>
+        <div className="flex items-center gap-x-3">
+          <Select>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Select an AI provider" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                <SelectLabel>AI provider</SelectLabel>
+                <SelectItem value="apple">OpenAI</SelectItem>
+                <SelectItem value="banana">Anthropic</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Input placeholder="API key" type="password" />
+        </div>
+      </div>
       <Button
         disabled={showSkeleton}
         size="lg"
