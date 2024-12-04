@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { SkeletonMail } from "./skeleton-mail";
 import { useState } from "react";
 import { Loader } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 export const ClientForm = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -12,7 +13,9 @@ export const ClientForm = () => {
 
   return (
     <>
-      <Input placeholder="The URL of the YouTube channel" />
+      <Label htmlFor="url">YouTube Channel URL</Label>
+      <Input id="url" placeholder="The URL of the YouTube channel" />
+      <Label htmlFor="url">YouTube Channel URL</Label>
       <Button
         disabled={showSkeleton}
         size="lg"
