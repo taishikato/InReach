@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { SkeletonMail } from "./_components/skeleton-mail";
 
 export default function Home() {
   return (
@@ -18,6 +19,8 @@ export default function Home() {
         <Button size="lg" className="w-full">
           Generate personalized email
         </Button>
+
+        <SkeletonMail />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
