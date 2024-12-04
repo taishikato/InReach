@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SkeletonMail } from "./skeleton-mail";
 import { useState } from "react";
+import { Loader } from "lucide-react";
 
 export const ClientForm = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -24,6 +25,7 @@ export const ClientForm = () => {
           setShowResult(true);
         }}
       >
+        {showSkeleton && <Loader className="animate-spin size-4" />}
         Generate personalized email
       </Button>
       {showSkeleton && <SkeletonMail />}
