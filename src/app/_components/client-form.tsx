@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CopyButton } from "./copy-button";
 
 export const ClientForm = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
@@ -62,15 +63,27 @@ export const ClientForm = () => {
       </Button>
       {showSkeleton && <SkeletonMail />}
       {showResult && (
-        <div>
-          Hi, My name is [Your Name] from [Name of Brand]. Our team has been
-          following your social media for a while now and I’m so impressed by
-          your [personalized compliments about their content with a specific
-          example.] I’m seeking influencers to collaborate with for paid
-          opportunities and you’d be a perfect fit based on your content. If
-          you’re interested, reply to this message and I’ll share more details.
-          Looking forward to hearing from you! Best,
-        </div>
+        <>
+          <CopyButton
+            variant="outline"
+            value="Hi, My name is [Your Name] from [Name of Brand]. Our team has been
+            following your social media for a while now and I’m so impressed by
+            your [personalized compliments about their content with a specific
+            example.] I’m seeking influencers to collaborate with for paid
+            opportunities and you’d be a perfect fit based on your content. If
+            you’re interested, reply to this message and I’ll share more
+            details. Looking forward to hearing from you! Best,"
+          />
+          <div>
+            Hi, My name is [Your Name] from [Name of Brand]. Our team has been
+            following your social media for a while now and I’m so impressed by
+            your [personalized compliments about their content with a specific
+            example.] I’m seeking influencers to collaborate with for paid
+            opportunities and you’d be a perfect fit based on your content. If
+            you’re interested, reply to this message and I’ll share more
+            details. Looking forward to hearing from you! Best,
+          </div>
+        </>
       )}
     </>
   );
