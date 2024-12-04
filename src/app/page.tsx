@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import { SkeletonMail } from "./_components/skeleton-mail";
+import { ClientForm } from "./_components/client-form";
 
 export default function Home() {
   return (
@@ -15,12 +13,7 @@ export default function Home() {
           height={38}
           priority
         /> */}
-        <Input placeholder="The URL of the YouTube channel" />
-        <Button size="lg" className="w-full">
-          Generate personalized email
-        </Button>
-
-        <SkeletonMail />
+        <ClientForm />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <a
