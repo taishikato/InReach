@@ -3,6 +3,7 @@
 // This enables autocomplete, go to definition, etc.
 import { OpenAI } from "https://deno.land/x/openai@v4.24.0/mod.ts";
 import process from "node:process";
+import { corsHeaders } from "../_shared/cors.ts";
 // import { OpenAI } from "npm:openai@4.76.0";
 // Setup type definitions for built-in Supabase Runtime APIs
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
@@ -10,6 +11,9 @@ import process from "node:process";
 console.log("Hello from Functions!");
 
 Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
   // const { apiKey } = await req.json();
   // const data = {
   //   message: `Hello ${name}!`,
@@ -27,7 +31,7 @@ Deno.serve(async (req) => {
   return new Response(
     JSON.stringify({ text: completion.choices[0].message.content }),
     {
-      headers: { "Content-Type": "application/json" },
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
     },
   );
 
