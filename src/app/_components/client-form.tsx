@@ -35,11 +35,23 @@ export const ClientForm = () => {
 
       const data = await response.json();
 
+      const supaRes = await fetch(
+        "https://yxpetxiurawcbgseobbv.supabase.co/functions/v1/openai",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data2 = await supaRes.json();
+
       if (!data.success) {
         throw new Error(data.message || "Failed to fetch subtitles");
       }
 
-      console.log({ data });
+      console.log({ data, data2 });
     } catch (error) {
       console.error("Error fetching subtitles:", error);
     }
