@@ -6,15 +6,15 @@ import { SkeletonMail } from "./skeleton-mail";
 import { useState } from "react";
 import { Loader } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectGroup,
+//   SelectItem,
+//   SelectLabel,
+//   SelectTrigger,
+//   SelectValue,
+// } from "@/components/ui/select";
 import { CopyButton } from "./copy-button";
 
 export const ClientForm = () => {
