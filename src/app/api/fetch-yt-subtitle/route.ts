@@ -1,14 +1,31 @@
 import { YoutubeLoader } from "@langchain/community/document_loaders/web/youtube";
 
 export async function POST(request: Request) {
-  const loader = YoutubeLoader.createFromUrl("https://youtu.be/bZQun8Y4L2A", {
-    language: "en-US",
-    // addVideoInfo: true,
-  });
+  try {
+    const { videoId } = await request.json();
 
-  const docs = await loader.load();
+    if (!videoId) {
+      return Response.json({
+        success: false,
+      }, { status: 400 });
+    }
 
-  console.log(docs);
+    const loader = YoutubeLoader.createFromUrl(`https://youtu.be/${videoId}`, {
+      language: "en-US",
+      // addVideoInfo: true,
+    });
 
-  return Response.json({ success: true });
+    const docs = await loader.load();
+
+    console.log(docs);
+
+    return Response.json({ success: true });
+  } catch (err) {
+    return Response.json({
+      success: false,
+      message: (err as Error).message,
+    }, {
+      status: 500,
+    });
+  }
 }
