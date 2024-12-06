@@ -21,6 +21,30 @@ export const ClientForm = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [showResult, setShowResult] = useState(false);
 
+  const handleFetchSubtitle = async () => {
+    try {
+      const response = await fetch("/api/fetch-yt-subtitle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          videoId: "29p8kIqyU_Y",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.message || "Failed to fetch subtitles");
+      }
+
+      console.log({ data });
+    } catch (error) {
+      console.error("Error fetching subtitles:", error);
+    }
+  };
+
   return (
     <>
       <div className="space-y-3 w-full">
@@ -53,7 +77,8 @@ export const ClientForm = () => {
         onClick={async () => {
           setShowSkeleton(true);
           setShowResult(false);
-          await new Promise((resolve) => setTimeout(resolve, 3000));
+          // await new Promise((resolve) => setTimeout(resolve, 3000));
+          await handleFetchSubtitle();
           setShowSkeleton(false);
           setShowResult(true);
         }}
