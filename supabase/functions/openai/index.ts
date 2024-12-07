@@ -1,14 +1,30 @@
 // Follow this setup guide to integrate the Deno language server with your editor:
 // https://deno.land/manual/getting_started/setup_your_environment
 // This enables autocomplete, go to definition, etc.
-import { OpenAI } from "https://deno.land/x/openai@v4.24.0/mod.ts";
 import process from "node:process";
 import { corsHeaders } from "../_shared/cors.ts";
+import { SupabaseVectorStore } from "https://esm.sh/@langchain/community@0.3.17/vectorstores/supabase";
+import { OpenAIEmbeddings } from "https://esm.sh/@langchain/openai@0.3.14";
+import { ConversationalRetrievalQAChain } from "https://esm.sh/langchain@0.3.6/chains";
+import { ChatOpenAI } from "https://esm.sh/@langchain/openai@0.3.14";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.47.1";
 // import { OpenAI } from "npm:openai@4.76.0";
 // Setup type definitions for built-in Supabase Runtime APIs
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
 console.log("Hello from Functions!");
+
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  // process.env.SUPABASE_ANON_KEY!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+);
+
+const model = new ChatOpenAI({
+  modelName: "gpt-4-turbo",
+  temperature: 0,
+  maxTokens: 1000,
+});
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -19,17 +35,36 @@ Deno.serve(async (req) => {
   //   message: `Hello ${name}!`,
   // };
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
+  const vectorStore = new SupabaseVectorStore(
+    new OpenAIEmbeddings({
+      modelName: "text-embedding-3-small",
+      model: "text-embedding-3-small",
+    }),
+    {
+      client: supabase,
+      tableName: "influencer_vectors",
+      queryName: "match_influencer_vectors",
+      filter: { source: "29p8kIqyU_Y" },
+    },
+  );
+
+  const chain = ConversationalRetrievalQAChain.fromLLM(
+    model,
+    vectorStore.asRetriever(),
+  );
+
+  const res = await chain.invoke({
+    question: "summarize it",
+    chat_history: "",
   });
 
-  const completion = await openai.chat.completions.create({
-    messages: [{ role: "user", content: "hello" }],
-    model: "gpt-3.5-turbo",
-  });
+  // const completion = await openai.chat.completions.create({
+  //   messages: [{ role: "user", content: "hello" }],
+  //   model: "gpt-3.5-turbo",
+  // });
 
   return new Response(
-    JSON.stringify({ text: completion.choices[0].message.content }),
+    JSON.stringify({ text: res.text }),
     {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     },
