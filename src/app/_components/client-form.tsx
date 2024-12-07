@@ -20,6 +20,7 @@ import { CopyButton } from "./copy-button";
 export const ClientForm = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [showResult, setShowResult] = useState(false);
+  const [apiKey, setApiKey] = useState<string | null>(null);
 
   const handleFetchSubtitle = async () => {
     try {
@@ -30,10 +31,15 @@ export const ClientForm = () => {
         },
         body: JSON.stringify({
           videoId: "29p8kIqyU_Y",
+          apiKey,
         }),
       });
 
       const data = await response.json();
+
+      if (!data.success) {
+        throw new Error("error");
+      }
 
       const supaRes = await fetch(
         "https://yxpetxiurawcbgseobbv.supabase.co/functions/v1/openai",
@@ -42,6 +48,9 @@ export const ClientForm = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            apiKey,
+          }),
         }
       );
 
@@ -73,7 +82,12 @@ export const ClientForm = () => {
               </SelectGroup>
             </SelectContent>
           </Select> */}
-          <Input placeholder="sk-*******************" type="password" />
+          <Input
+            placeholder="sk-*******************"
+            type="password"
+            value={apiKey ?? ""}
+            onChange={(e) => setApiKey(e.target.value)}
+          />
         </div>
       </div>
       <Button

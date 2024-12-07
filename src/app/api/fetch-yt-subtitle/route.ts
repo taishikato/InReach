@@ -4,10 +4,6 @@ import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { createClient } from "@supabase/supabase-js";
 
-const embeddings = new OpenAIEmbeddings({
-  model: "text-embedding-3-small",
-});
-
 const supabaseClient = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -20,13 +16,18 @@ const textSplitter = new RecursiveCharacterTextSplitter({
 
 export async function POST(request: Request) {
   try {
-    const { videoId } = await request.json();
+    const { videoId, apiKey } = await request.json();
 
-    if (!videoId) {
+    if (!videoId || !apiKey) {
       return Response.json({
         success: false,
       }, { status: 400 });
     }
+
+    const embeddings = new OpenAIEmbeddings({
+      model: "text-embedding-3-small",
+      apiKey,
+    });
 
     const loader = YoutubeLoader.createFromUrl(`https://youtu.be/${videoId}`, {
       // language: "en-US",

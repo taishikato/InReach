@@ -12,31 +12,32 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.47.1";
 // Setup type definitions for built-in Supabase Runtime APIs
 /// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
 
-console.log("Hello from Functions!");
-
 const supabase = createClient(
   process.env.SUPABASE_URL!,
   // process.env.SUPABASE_ANON_KEY!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
-const model = new ChatOpenAI({
-  modelName: "gpt-4-turbo",
-  temperature: 0,
-  maxTokens: 1000,
-});
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-  // const { apiKey } = await req.json();
-  // const data = {
-  //   message: `Hello ${name}!`,
-  // };
+
+  const { apiKey } = await req.json();
+
+  if (!apiKey) {
+    return new Response(
+      JSON.stringify({ success: false }),
+      {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
+  }
 
   const vectorStore = new SupabaseVectorStore(
     new OpenAIEmbeddings({
+      apiKey,
       modelName: "text-embedding-3-small",
       model: "text-embedding-3-small",
     }),
@@ -47,6 +48,13 @@ Deno.serve(async (req) => {
       filter: { source: "29p8kIqyU_Y" },
     },
   );
+
+  const model = new ChatOpenAI({
+    apiKey,
+    modelName: "gpt-4-turbo",
+    temperature: 0,
+    maxTokens: 1000,
+  });
 
   const chain = ConversationalRetrievalQAChain.fromLLM(
     model,
