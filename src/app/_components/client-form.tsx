@@ -54,7 +54,7 @@ export const ClientForm = () => {
         }
       );
 
-      const data2 = await supaRes.json();
+      await supaRes.json();
     } catch (error) {
       console.error("Error fetching subtitles:", error);
     }
