@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "genType": "npx supabase gen types typescript --project-id 'yxpetxiurawcbgseobbv' --schema public > src/types/supabase.ts"
   },
   "dependencies": {
     "@langchain/community": "^0.3.17",
