@@ -63,6 +63,7 @@ export const ClientForm = () => {
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
   const [result, setResult] = useState("");
+  const [videoId, setVideoId] = useState<string | null>(null);
 
   const handleFetchSubtitle = async () => {
     if (!url) throw new Error("YouTube video URL is necessary");
@@ -70,6 +71,8 @@ export const ClientForm = () => {
     const videoId = isValidYoutubeUrl(url);
 
     if (!videoId) throw new Error("invalid video URL");
+
+    setVideoId(videoId);
 
     const response = await fetch("/api/fetch-yt-subtitle", {
       method: "POST",
@@ -115,7 +118,7 @@ export const ClientForm = () => {
           id="url"
           value={url ?? ""}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="https://youtu.be/ASABxNenD_U?si=Q67z6hxFagwWtrFh"
+          placeholder="https://www.youtube.com/watch?v=ASABxNenD_U"
         />
       </div>
 
@@ -147,6 +150,7 @@ export const ClientForm = () => {
         size="lg"
         className="w-full"
         onClick={async () => {
+          setVideoId(null);
           setShowSkeleton(true);
           setShowResult(false);
           try {
@@ -181,6 +185,7 @@ export const ClientForm = () => {
             {`Hi,
 
 My name is [Your Name] from [Name of Brand]. Our team has been following your social media for a while now and I'm so impressed by your ${result}
+https://www.youtube.com/watch?v=${videoId ?? ""}
 
 I'm seeking influencers to collaborate with for paid opportunities and you'd be a perfect fit based on your content. If you're interested, reply to this message and I'll share more details. Looking forward to hearing from you!
 
