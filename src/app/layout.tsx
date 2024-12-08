@@ -4,6 +4,7 @@ import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "@/components/ui/sonner";
 import { CSPostHogProvider } from "./providers";
+// import { ThemeProvider } from "./_components/theme-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,12 +30,19 @@ export default function RootLayout({
   return (
     <html lang="en">
       <CSPostHogProvider>
+        {/* <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        > */}
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
-          <Toaster />
+          <Toaster richColors />
         </body>
+        {/* </ThemeProvider> */}
         <GoogleAnalytics gaId="G-EEKH507RZX" />
       </CSPostHogProvider>
     </html>
