@@ -110,12 +110,12 @@ export const ClientForm = () => {
   return (
     <>
       <div className="space-y-3 w-full">
-        <Label htmlFor="url">YouTube Channel URL</Label>
+        <Label htmlFor="url">YouTube Video URL</Label>
         <Input
           id="url"
           value={url ?? ""}
           onChange={(e) => setUrl(e.target.value)}
-          placeholder="The URL of the YouTube channel"
+          placeholder="https://youtu.be/ASABxNenD_U?si=Q67z6hxFagwWtrFh"
         />
       </div>
 
