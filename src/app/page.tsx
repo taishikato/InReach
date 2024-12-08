@@ -1,9 +1,20 @@
 import Image from "next/image";
 import { ClientForm } from "./_components/client-form";
+import Logo from "./logo.svg";
 
 export default function Home() {
   return (
     <div className="w-full max-w-screen-md mx-auto grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <div className="flex items-center gap-x-2">
+        <Image
+          src={Logo.src}
+          alt="logo"
+          width={Logo.width}
+          height={Logo.height}
+          className="size-5"
+        />
+        <span className="font-medium">InReach</span>
+      </div>
       <main className="flex flex-col gap-y-7 row-start-2 items-center sm:items-start w-full">
         <h1 className="text-4xl text-center font-semibold mb-8">
           Let us help you generate an offer email real quick
