@@ -18,6 +18,17 @@ import { Label } from "@/components/ui/label";
 import { CopyButton } from "./copy-button";
 import { toast } from "sonner";
 
+const generateEmailOutput = (result: string, videoId: string) => {
+  return `Hi,
+
+My name is [Your Name] from [Name of Brand]. Our team has been following your social media for a while now and I'm so impressed by your ${result}
+https://www.youtube.com/watch?v=${videoId ?? ""}
+
+I'm seeking influencers to collaborate with for paid opportunities and you'd be a perfect fit based on your content. If you're interested, reply to this message and I'll share more details. Looking forward to hearing from you!
+
+Best,`;
+};
+
 const isValidYoutubeUrl = (url: string): string | null => {
   // Regular expression to match various YouTube URL formats
   const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
@@ -173,23 +184,10 @@ export const ClientForm = () => {
         <>
           <CopyButton
             variant="outline"
-            value="Hi, My name is [Your Name] from [Name of Brand]. Our team has been
-            following your social media for a while now and I’m so impressed by
-            your [personalized compliments about their content with a specific
-            example.] I’m seeking influencers to collaborate with for paid
-            opportunities and you’d be a perfect fit based on your content. If
-            you’re interested, reply to this message and I’ll share more
-            details. Looking forward to hearing from you! Best,"
+            value={generateEmailOutput(result, videoId ?? "")}
           />
           <div className="whitespace-pre-line">
-            {`Hi,
-
-My name is [Your Name] from [Name of Brand]. Our team has been following your social media for a while now and I'm so impressed by your ${result}
-https://www.youtube.com/watch?v=${videoId ?? ""}
-
-I'm seeking influencers to collaborate with for paid opportunities and you'd be a perfect fit based on your content. If you're interested, reply to this message and I'll share more details. Looking forward to hearing from you!
-
-Best,`}
+            {generateEmailOutput(result, videoId ?? "")}
           </div>
         </>
       )}
