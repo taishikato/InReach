@@ -3,8 +3,9 @@ import { SupabaseVectorStore } from "@langchain/community/vectorstores/supabase"
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { createClient } from "@supabase/supabase-js";
+import { Database } from "@/types/supabase";
 
-const supabaseClient = createClient(
+const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
 );
@@ -24,6 +25,21 @@ export async function POST(request: Request) {
       }, { status: 400 });
     }
 
+    const { count, error } = await supabase.from("influencer_vectors")
+      .select("*", { count: "exact", head: true })
+      .eq("metadata->>source", videoId);
+
+    if (error) {
+      console.error(error);
+
+      throw new Error(error.message);
+    }
+
+    if ((count as number) > 0) {
+      console.log("skip embedding...");
+      return Response.json({ success: true });
+    }
+
     const embeddings = new OpenAIEmbeddings({
       model: "text-embedding-3-small",
       apiKey,
@@ -35,18 +51,19 @@ export async function POST(request: Request) {
     });
 
     const docs = await loader.load();
-    console.log(docs);
 
     const texts = await textSplitter.splitDocuments(docs);
 
     await SupabaseVectorStore.fromDocuments(texts, embeddings, {
-      client: supabaseClient,
+      client: supabase,
       tableName: "influencer_vectors",
       queryName: "match_influencer_vectors",
     });
 
     return Response.json({ success: true });
   } catch (err) {
+    console.error(err);
+
     return Response.json({
       success: false,
       message: (err as Error).message,

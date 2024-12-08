@@ -62,6 +62,7 @@ export const ClientForm = () => {
   const [showResult, setShowResult] = useState(false);
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [url, setUrl] = useState<string | null>(null);
+  const [result, setResult] = useState("");
 
   const handleFetchSubtitle = async () => {
     try {
@@ -97,11 +98,14 @@ export const ClientForm = () => {
           },
           body: JSON.stringify({
             apiKey,
+            videoId,
           }),
         }
       );
 
-      await supaRes.json();
+      const data2 = await supaRes.json();
+
+      setResult(data2.text);
     } catch (error) {
       console.error("Error fetching subtitles:", error);
       toast.error((error as Error).message);
@@ -172,14 +176,14 @@ export const ClientForm = () => {
             you’re interested, reply to this message and I’ll share more
             details. Looking forward to hearing from you! Best,"
           />
-          <div>
-            Hi, My name is [Your Name] from [Name of Brand]. Our team has been
-            following your social media for a while now and I’m so impressed by
-            your [personalized compliments about their content with a specific
-            example.] I’m seeking influencers to collaborate with for paid
-            opportunities and you’d be a perfect fit based on your content. If
-            you’re interested, reply to this message and I’ll share more
-            details. Looking forward to hearing from you! Best,
+          <div className="whitespace-pre-line">
+            {`Hi,
+
+My name is [Your Name] from [Name of Brand]. Our team has been following your social media for a while now and I'm so impressed by your ${result}
+
+I'm seeking influencers to collaborate with for paid opportunities and you'd be a perfect fit based on your content. If you're interested, reply to this message and I'll share more details. Looking forward to hearing from you!
+
+Best,`}
           </div>
         </>
       )}
