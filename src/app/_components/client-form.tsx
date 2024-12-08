@@ -99,7 +99,7 @@ export const ClientForm = () => {
     const data = await response.json();
 
     if (!data.success) {
-      throw new Error("error");
+      throw new Error(data.message);
     }
 
     const supaRes = await fetch(
