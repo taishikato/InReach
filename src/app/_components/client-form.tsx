@@ -17,20 +17,66 @@ import { Label } from "@/components/ui/label";
 // } from "@/components/ui/select";
 import { CopyButton } from "./copy-button";
 
+const isValidYoutubeUrl = (url: string): string | null => {
+  // Regular expression to match various YouTube URL formats
+  const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/;
+
+  try {
+    // Check if URL matches YouTube pattern
+    if (!youtubeRegex.test(url)) {
+      return null;
+    }
+
+    // Try parsing as URL to validate format
+    const urlObj = new URL(url);
+
+    // Check for valid YouTube domains
+    const validDomains = [
+      "youtube.com",
+      "www.youtube.com",
+      "youtu.be",
+      "www.youtu.be",
+    ];
+    if (!validDomains.includes(urlObj.hostname)) {
+      return null;
+    }
+
+    // Extract video ID
+    if (urlObj.hostname.includes("youtu.be")) {
+      // Handle youtu.be format
+      return urlObj.pathname.slice(1);
+    } else {
+      // Handle youtube.com format
+      const videoId = urlObj.searchParams.get("v");
+      return videoId;
+    }
+  } catch {
+    // If URL parsing fails, return null
+    return null;
+  }
+};
+
 export const ClientForm = () => {
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [apiKey, setApiKey] = useState<string | null>(null);
+  const [url, setUrl] = useState<string | null>(null);
 
   const handleFetchSubtitle = async () => {
     try {
+      if (!url) throw new Error("url is necessary");
+
+      const videoId = isValidYoutubeUrl(url);
+
+      if (!videoId) throw new Error("invalid video URL");
+
       const response = await fetch("/api/fetch-yt-subtitle", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          videoId: "29p8kIqyU_Y",
+          videoId,
           apiKey,
         }),
       });
@@ -64,7 +110,12 @@ export const ClientForm = () => {
     <>
       <div className="space-y-3 w-full">
         <Label htmlFor="url">YouTube Channel URL</Label>
-        <Input id="url" placeholder="The URL of the YouTube channel" />
+        <Input
+          id="url"
+          value={url ?? ""}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="The URL of the YouTube channel"
+        />
       </div>
 
       <div className="space-y-3 w-full">
