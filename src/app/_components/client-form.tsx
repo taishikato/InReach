@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label";
 //   SelectValue,
 // } from "@/components/ui/select";
 import { CopyButton } from "./copy-button";
+import { toast } from "sonner";
 
 const isValidYoutubeUrl = (url: string): string | null => {
   // Regular expression to match various YouTube URL formats
@@ -64,7 +65,7 @@ export const ClientForm = () => {
 
   const handleFetchSubtitle = async () => {
     try {
-      if (!url) throw new Error("url is necessary");
+      if (!url) throw new Error("YouTube video URL is necessary");
 
       const videoId = isValidYoutubeUrl(url);
 
@@ -103,6 +104,7 @@ export const ClientForm = () => {
       await supaRes.json();
     } catch (error) {
       console.error("Error fetching subtitles:", error);
+      toast.error((error as Error).message);
     }
   };
 
