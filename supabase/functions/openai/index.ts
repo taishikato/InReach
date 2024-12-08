@@ -8,9 +8,15 @@ import { OpenAIEmbeddings } from "https://esm.sh/@langchain/openai@0.3.14";
 import { ConversationalRetrievalQAChain } from "https://esm.sh/langchain@0.3.6/chains";
 import { ChatOpenAI } from "https://esm.sh/@langchain/openai@0.3.14";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.47.1";
-// import { OpenAI } from "npm:openai@4.76.0";
-// Setup type definitions for built-in Supabase Runtime APIs
-/// <reference types="https://esm.sh/@supabase/functions-js/src/edge-runtime.d.ts" />
+import { Redis } from "https://esm.sh/@upstash/redis@1.34.3";
+import { Ratelimit } from "https://esm.sh/@upstash/ratelimit@2.0.5";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "10 s"),
+  prefix: "@upstash/ratelimit",
+  analytics: true,
+});
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -18,9 +24,28 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
+function ips(req: Request) {
+  return req.headers.get("x-forwarded-for")?.split(/\s*,\s*/);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
+  }
+
+  const clientIps = ips(req) || [""];
+
+  const { success } = await ratelimit.limit(clientIps[0]);
+  if (!success) {
+    console.warn("Too many requests", clientIps[0]);
+
+    return new Response(
+      JSON.stringify({ success: false }),
+      {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      },
+    );
   }
 
   const { apiKey } = await req.json();
