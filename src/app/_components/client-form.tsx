@@ -65,51 +65,46 @@ export const ClientForm = () => {
   const [result, setResult] = useState("");
 
   const handleFetchSubtitle = async () => {
-    try {
-      if (!url) throw new Error("YouTube video URL is necessary");
+    if (!url) throw new Error("YouTube video URL is necessary");
 
-      const videoId = isValidYoutubeUrl(url);
+    const videoId = isValidYoutubeUrl(url);
 
-      if (!videoId) throw new Error("invalid video URL");
+    if (!videoId) throw new Error("invalid video URL");
 
-      const response = await fetch("/api/fetch-yt-subtitle", {
+    const response = await fetch("/api/fetch-yt-subtitle", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        videoId,
+        apiKey,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error("error");
+    }
+
+    const supaRes = await fetch(
+      "https://yxpetxiurawcbgseobbv.supabase.co/functions/v1/openai",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          videoId,
           apiKey,
+          videoId,
         }),
-      });
-
-      const data = await response.json();
-
-      if (!data.success) {
-        throw new Error("error");
       }
+    );
 
-      const supaRes = await fetch(
-        "https://yxpetxiurawcbgseobbv.supabase.co/functions/v1/openai",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            apiKey,
-            videoId,
-          }),
-        }
-      );
+    const data2 = await supaRes.json();
 
-      const data2 = await supaRes.json();
-
-      setResult(data2.text);
-    } catch (error) {
-      console.error("Error fetching subtitles:", error);
-      toast.error((error as Error).message);
-    }
+    setResult(data2.text);
   };
 
   return (
@@ -154,10 +149,16 @@ export const ClientForm = () => {
         onClick={async () => {
           setShowSkeleton(true);
           setShowResult(false);
-          // await new Promise((resolve) => setTimeout(resolve, 3000));
-          await handleFetchSubtitle();
-          setShowSkeleton(false);
-          setShowResult(true);
+          try {
+            await handleFetchSubtitle();
+            setShowResult(true);
+          } catch (err) {
+            setShowResult(false);
+            console.error("Error fetching subtitles:", err);
+            toast.error((err as Error).message);
+          } finally {
+            setShowSkeleton(false);
+          }
         }}
       >
         {showSkeleton && <Loader className="animate-spin size-4" />}
