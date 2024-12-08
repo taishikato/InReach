@@ -1,6 +1,3 @@
-// Follow this setup guide to integrate the Deno language server with your editor:
-// https://deno.land/manual/getting_started/setup_your_environment
-// This enables autocomplete, go to definition, etc.
 import process from "node:process";
 import { corsHeaders } from "../_shared/cors.ts";
 import { SupabaseVectorStore } from "https://esm.sh/@langchain/community@0.3.17/vectorstores/supabase";
@@ -48,7 +45,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  const { apiKey } = await req.json();
+  const { apiKey, videoId } = await req.json();
 
   if (!apiKey) {
     return new Response(
@@ -70,7 +67,7 @@ Deno.serve(async (req) => {
       client: supabase,
       tableName: "influencer_vectors",
       queryName: "match_influencer_vectors",
-      filter: { source: "29p8kIqyU_Y" },
+      filter: { source: videoId },
     },
   );
 
@@ -87,14 +84,33 @@ Deno.serve(async (req) => {
   );
 
   const res = await chain.invoke({
-    question: "summarize it",
+    question:
+      `You are writing a brief personalized message for an influencer outreach email. Using the provided context from their video content, create a genuine and specific compliment that demonstrates you've watched their content.
+Requirements:
+- Length: 2 sentences only
+- Must be specific to their content (not generic)
+- Focus on their unique style, insights, or approach
+- Should feel natural when inserted into: "I'm so impressed by your [YOUR MESSAGE]"
+- Avoid mentioning "content" or "videos" directly (since that's implied)
+- Use natural, conversational language
+- Don't use superlatives like "amazing" or "incredible"
+- Always end each sentence with proper punctuation (period, exclamation point, etc.)
+- If the message ends mid-sentence, don't add a period
+- If it's a complete sentence, make sure it ends with a period
+
+Examples of good messages:
+- clear and engaging way of explaining complex tech concepts through real-world examples.
+- thoughtful approach to sustainable fashion and how you break down ethical shopping decisions.
+- authentic take on mindfulness and how you integrate it into daily routines.
+
+Bad examples (too generic):
+- amazing content
+- great videos and editing style
+- wonderful personality in your videos
+
+Generate only the personalized message without any additional text or explanation.`,
     chat_history: "",
   });
-
-  // const completion = await openai.chat.completions.create({
-  //   messages: [{ role: "user", content: "hello" }],
-  //   model: "gpt-3.5-turbo",
-  // });
 
   return new Response(
     JSON.stringify({ text: res.text }),
@@ -102,21 +118,4 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     },
   );
-
-  // return new Response(
-  //   JSON.stringify(data),
-  //   { headers: { "Content-Type": "application/json" } },
-  // );
 });
-
-/* To invoke locally:
-
-  1. Run `supabase start` (see: https://supabase.com/docs/reference/cli/supabase-start)
-  2. Make an HTTP request:
-
-  curl -i --location --request POST 'http://127.0.0.1:54321/functions/v1/openai' \
-    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0' \
-    --header 'Content-Type: application/json' \
-    --data '{"name":"Functions"}'
-
-*/
