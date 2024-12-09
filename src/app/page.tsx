@@ -19,14 +19,6 @@ export default function Home() {
         <h1 className="text-4xl text-center font-semibold mb-8">
           Let us help you generate an offer email real quick
         </h1>
-        {/* <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        /> */}
         <ClientForm />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
