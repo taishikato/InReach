@@ -93,19 +93,16 @@ export const ClientForm = () => {
       throw new Error(data.message);
     }
 
-    const supaRes = await fetch(
-      "https://yxpetxiurawcbgseobbv.supabase.co/functions/v1/openai",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          apiKey,
-          videoId,
-        }),
-      }
-    );
+    const supaRes = await fetch("/api/openai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        apiKey,
+        videoId,
+      }),
+    });
 
     const data2 = await supaRes.json();
 
