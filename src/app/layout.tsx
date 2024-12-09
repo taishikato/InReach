@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "@/components/ui/sonner";
-import { CSPostHogProvider } from "./providers";
 import { ThemeProvider } from "./_components/theme-provider";
 
 const geistSans = localFont({
@@ -30,22 +29,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <CSPostHogProvider>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
         >
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster richColors />
-          </ThemeProvider>
-        </body>
-        <GoogleAnalytics gaId="G-EEKH507RZX" />
-      </CSPostHogProvider>
+          {children}
+          <Toaster richColors />
+        </ThemeProvider>
+      </body>
+      <GoogleAnalytics gaId="G-EEKH507RZX" />
     </html>
   );
 }
