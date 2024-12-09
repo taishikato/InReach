@@ -9,7 +9,7 @@ Let's install the dependencies:
 npm i
 ```
 
-then set the env variables (check the `.env.sample` file),
+then set the env variables (check the `.env.sample` file), make a table and a function (check `supabase/migrations/20241209065922_db-migration.sql`).
 
 finally run the development server:
 
