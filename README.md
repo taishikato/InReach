@@ -9,7 +9,9 @@ Let's install the dependencies:
 npm i
 ```
 
-then, run the development server:
+then set the env variables (check the `.env.sample` file),
+
+finally run the development server:
 
 ```bash
 npm run dev
