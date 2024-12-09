@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { GoogleAnalytics } from "@next/third-parties/google";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "./_components/theme-provider";
 
@@ -42,7 +41,6 @@ export default function RootLayout({
           <Toaster richColors />
         </ThemeProvider>
       </body>
-      <GoogleAnalytics gaId="G-EEKH507RZX" />
     </html>
   );
 }
